@@ -1,19 +1,19 @@
-\connect template1;
-DROP DATABASE IF EXISTS paymo;
-CREATE DATABASE paymo;
-\connect paymo;
+-- \connect template1;
+-- DROP DATABASE IF EXISTS paymo;
+-- CREATE DATABASE paymo;
+-- \connect paymo;
 
 CREATE TABLE USERS (
   id SERIAL PRIMARY KEY,
-  username varchar(20) UNIQUE NOT NULL,
-  first_name varchar(20) NOT NULL,
-  last_name varchar(20) NOT NULL,
+  username VARCHAR(20) UNIQUE NOT NULL,
+  first_name VARCHAR(20) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
   updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-  phone varchar(11) UNIQUE NOT NULL,
-  password varchar(64) NOT NULL,
-  email varchar(64) UNIQUE NOT NULL,
-  avatar_url varchar(500)
+  phone VARCHAR(11) UNIQUE NOT NULL,
+  password VARCHAR(64) NOT NULL,
+  email VARCHAR(64) UNIQUE NOT NULL,
+  avatar_url VARCHAR(500)
 );
 
 CREATE TABLE USERS_TRANSACTIONS (
@@ -23,13 +23,21 @@ CREATE TABLE USERS_TRANSACTIONS (
 );
 
 CREATE TABLE TRANSACTIONS (
-  txn_id int PRIMARY KEY REFERENCES USERS_TRANSACTIONS(txn_id),
-  amount NUMERIC(10,2),
+  txn_id INT PRIMARY KEY REFERENCES USERS_TRANSACTIONS(txn_id),
+  wallet_from_id INT REFERENCES BALANCE(bal_id),
+  wallet_to_id INT REFERENCES BALANCE(bal_id),
+  currency_from_type VARCHAR(5) NOT NULL,
+  currency_to_type VARCHAR(5) NOT NULL,
+  amount_from NUMERIC(10,2) NOT NULL,
+  amount_to NUMERIC(10,2) NOT NULL,
+  fx NUMERIC(5,5) NOT NULL,
   note VARCHAR(1000),
   created_at timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE BALANCE (
-  user_id INT PRIMARY KEY REFERENCES USERS(id),
+  bal_id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES USERS(id),
   amount NUMERIC(10,2)
+  currency_type VARCHAR(5) NOT NULL
 );
