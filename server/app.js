@@ -55,6 +55,18 @@ app.get('/usernames', (req, res) => {
   });
 })
 
+app.get('/payee/wallets', (req, res) => {
+  db.getPayeeWallets(req.query.username, (err, result) => {
+    if (err) {
+      console.error('error on get of payee wallets:', err.message);
+      res.status(400).json({ err : "No wallets found." });
+    } else {
+      res.json(result);
+      console.log('result', result);
+    }
+  }); 
+})
+
 app.get('/profile', (req, res) => {
   var userId = req.query.userId;
   db.profile.getUserInfo(parseInt(_.escape(userId.replace(/"/g,"'"))), (err, row) => {
@@ -70,7 +82,9 @@ app.get('/profile', (req, res) => {
           username: _.unescape(ui.username),
           displayName: _.unescape(ui.first_name + ' ' + ui.last_name),
           createdAt: _.unescape(ui.created_at),
-          avatarUrl: _.unescape(ui.avatar_url)
+          avatarUrl: _.unescape(ui.avatar_url),
+          email: _.unescape(ui.email),
+          phone: _.unescape(ui.phone)
         }
         res.status(200).json(userInfo);
       } else{
@@ -97,12 +111,29 @@ app.get('/balance', (req, res) => {
   });
 });
 
+app.get('/wallets', (req, res) => {
+  let userId = req.query.userId;
+  db.profile.getBalance(parseInt(_.escape(userId.replace(/"/g,"'"))), (err, rows) => {
+    if (err) {
+      console.error("Error retrieving from database: ", err);
+      res.status(500).json(err);
+    } else {
+      if (rows.length) {
+        res.status(200).json(rows);
+      } else{
+        res.status(400).json({ error : "No such user in database."});
+      }
+    }
+  });
+});
+
 
 app.post('/signup', (req, res) => {
   // check to see if req fields are empty
   if(!req.body.username ||
     !req.body.password ||
     !req.body.firstName ||
+    !req.body.wallets||
     !req.body.lastName) {
       res.status(400).json({ error: "Improper format." });
       return;
@@ -110,9 +141,13 @@ app.post('/signup', (req, res) => {
 
   let signupData = {};
   for(let key in req.body) {
-    signupData[_.escape(key.replace(/"/g,"'"))] = _.escape(req.body[key].replace(/"/g,"'"));
+    if (key !== 'wallets') {
+      signupData[_.escape(key.replace(/"/g,"'"))] = _.escape(req.body[key].replace(/"/g,"'"));
+    } else {
+      signupData[key] = req.body[key];
+    }
   }
-  db.signup.newUserSignup(signupData, 100)
+  db.signup.newUserSignup(req.body)
     .then(userId => {
       res.status(201).json({ userId: userId });
     })
@@ -142,23 +177,47 @@ app.post('/pay', (req, res) => {
     res.status(400).json({ error : 'Improper format.' });
     return;
   }
-  db.payment(paymentData)
-    .then(({balance, transactionId}) => {
-      lib.notify.notifyTransaction(transactionId);
-    // .then(balance => {
-      // sms.notifyTransaction(transactionId);
-      res.status(201).json({ balance: balance });
-    })
-    .catch(err => {
-      console.error('error on payment:', err.message);
-      if(err.message.includes('Insufficient funds')) {
-        res.status(422).json({ error: 'Insufficient funds.' });
-      } else if(err.message.includes('Invalid payee username')) {
-        res.status(422).json({ error: 'Invalid payee username.' });
-      } else {
-        res.status(400).json({ error : 'Improper format.' })
-      }
-    })
+  // db.payment(paymentData)
+  //   .then(({balance, transactionId}) => {
+  //     lib.notify.notifyTransaction(transactionId);
+  //   // .then(balance => {
+  //     // sms.notifyTransaction(transactionId);
+  //     res.status(201).json({ balance: balance });
+  //   })
+  //   .catch(err => {
+  //     console.error('error on payment:', err.message);
+  //     if(err.message.includes('Insufficient funds')) {
+  //       res.status(422).json({ error: 'Insufficient funds.' });
+  //     } else if(err.message.includes('Invalid payee username')) {
+  //       res.status(422).json({ error: 'Invalid payee username.' });
+  //     } else {
+  //       res.status(400).json({ error : 'Improper format.' })
+  //     }
+  //   })
+  db.payment(paymentData, result => {
+    if (result === 'Transaction Successful') {
+      res.status(201).json(result);
+    } else {
+      res.status(422).json({ error: 'Insufficient funds.' });
+    }
+  })
+//     .then(result => {
+//       if (result === 'Transaction Successful') {
+//         res.status(201).json(result);
+//       } else {
+//         res.status(422).json({ error: 'Insufficient funds.' });
+//       }
+//     })
+//     .catch(err => {
+//       console.error('error on payment:', err.message);
+//       if(err.message.includes('Insufficient funds')) {
+//         res.status(422).json({ error: 'Insufficient funds.' });
+//       } else if(err.message.includes('Invalid payee username')) {
+//         res.status(422).json({ error: 'Invalid payee username.' });
+//       } else {
+//         res.status(400).json({ error : 'Improper format.' })
+//       }
+//     })
 });
 
 
