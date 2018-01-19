@@ -19,30 +19,30 @@ CREATE TABLE USERS (
   avatar_url VARCHAR(500)
 );
 
-CREATE TABLE USERS_TRANSACTIONS (
-  txn_id SERIAL PRIMARY KEY,
-  payer_id INT REFERENCES USERS(id), 
-  payee_id INT REFERENCES USERS(id)
-);
-
-CREATE TABLE TRANSACTIONS (
-  txn_id INT PRIMARY KEY REFERENCES USERS_TRANSACTIONS(txn_id),
-  wallet_from_id INT REFERENCES BALANCE(bal_id),
-  wallet_to_id INT REFERENCES BALANCE(bal_id),
-  currency_from_type VARCHAR(5) NOT NULL,
-  currency_to_type VARCHAR(5) NOT NULL,
-  amount_from NUMERIC(10,2) NOT NULL,
-  amount_to NUMERIC(10,2) NOT NULL,
-  fx NUMERIC(5,5) NOT NULL,
-  note VARCHAR(1000),
-  created_at timestamp DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE BALANCE (
   bal_id SERIAL PRIMARY KEY,
   user_id INT REFERENCES USERS(id),
-  amount NUMERIC(10,2)
+  amount NUMERIC(10,2),
   currency_type VARCHAR(5) NOT NULL
+);
+
+CREATE TABLE TRANSACTIONS (
+  txn_id SERIAL PRIMARY KEY,
+  wallet_from_id INT REFERENCES BALANCE(bal_id),
+  wallet_to_id INT REFERENCES BALANCE(bal_id),
+  currency_from_type VARCHAR(5),
+  currency_to_type VARCHAR(5),
+  amount NUMERIC(10,2),
+  amount_to NUMERIC(10,2),
+  note VARCHAR(1000),
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE USERS_TRANSACTIONS (
+  txn_id INT PRIMARY KEY REFERENCES TRANSACTIONS(txn_id),
+  payer_id INT REFERENCES USERS(id), 
+  payee_id INT REFERENCES USERS(id)
 );
 
 CREATE TABLE MESSAGES (
