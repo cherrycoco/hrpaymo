@@ -4,11 +4,7 @@ import FriendList from './ChatFriendList.jsx';
 import {ChatMessages, ChatBox} from './ChatMessages.jsx';
 import Navbar from './Navbar.jsx';
 import openSocket from 'socket.io-client';
-const socket = openSocket('/');
-
-//REMOVE AFTER
-import Badge from 'material-ui/Badge';
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
+let socket;
 
 const fakeData = [
   {
@@ -99,7 +95,6 @@ class Chat extends Component {
     super(props);
     this.state = {
       users: [],
-      chats: fakeData,
       onlineUsers: [],
       currentChatData: {
         friend: {
@@ -112,10 +107,13 @@ class Chat extends Component {
     }
     this.sendMessage = this.sendMessage.bind(this);
     this.openChatWithFriend = this.openChatWithFriend.bind(this);
+    this.logOutAndDisconnect = this.logOutAndDisconnect.bind(this);
   }
   componentDidMount() {
+    socket = openSocket('/');
     this.getUsers();
     socket.on('chat', (chatData) => {
+      console.log('CHAT DATA SENT!', chatData);
       this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername);
     });
     socket.on('user disconnect', (onlineUsers) => {
@@ -217,12 +215,27 @@ class Chat extends Component {
     });
   }
 
+  logOutAndDisconnect() {
+    this.setState({
+      currentChatData: 
+        {
+          friend: {
+            username: '', 
+            imageUrl: ''
+          },
+          messages: []
+        }
+    });
+    socket.close();
+    this.props.logUserOut();
+  }
+
   render() {
     return (
       <div>
         <Navbar 
         isLoggedIn={this.props.isLoggedIn} 
-        logUserOut={this.props.logUserOut}
+        logUserOut={this.logOutAndDisconnect}
         />
         <div style={styles.container}>
           <div style={styles.friendList} className="friend-list">
