@@ -199,11 +199,12 @@ app.post('/pay', (req, res) => {
   //       res.status(400).json({ error : 'Improper format.' })
   //     }
   //   })
-  db.payment(paymentData, result => {
-    if (result === 'Transaction Successful') {
-      res.status(201).json(result);
+  db.payment(paymentData, (err, transactionId) => {
+    if (transactionId) {
+      lib.notify.notifyTransaction(transactionId);
+      res.status(201).json(transactionId);
     } else {
-      res.status(422).json({ error: 'Insufficient funds.' });
+      res.status(422).json({ err: 'Insufficient funds.' });
     }
   });
 });
