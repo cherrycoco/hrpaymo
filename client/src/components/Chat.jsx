@@ -3,8 +3,8 @@ import axios from 'axios';
 import FriendList from './ChatFriendList.jsx';
 import {ChatMessages, ChatBox} from './ChatMessages.jsx';
 import Navbar from './Navbar.jsx';
-import openSocket from 'socket.io-client';
-let socket;
+// import openSocket from 'socket.io-client';
+// let socket;
 
 const fakeData = [
   {
@@ -89,6 +89,15 @@ const styles = {
   }
 };
 
+let emptyChatData = {
+  friend: {
+    username: '', 
+    imageUrl: '',
+    id: null
+  },
+  messages: []
+}
+
 class Chat extends Component {
 
   constructor(props) {
@@ -96,13 +105,7 @@ class Chat extends Component {
     this.state = {
       users: [],
       onlineUsers: [],
-      currentChatData: {
-        friend: {
-          username: '', 
-          imageUrl: ''
-        },
-        messages: []
-      },
+      currentChatData: emptyChatData,
       notifications: {}
     }
     this.sendMessage = this.sendMessage.bind(this);
@@ -110,26 +113,30 @@ class Chat extends Component {
     this.logOutAndDisconnect = this.logOutAndDisconnect.bind(this);
   }
   componentDidMount() {
-    socket = openSocket('/');
+    // socket = openSocket('/');
+    this.setState({
+      currentChatData: emptyChatData
+    });
+
     this.getUsers();
-    socket.on('chat', (chatData) => {
+    this.props.socket.on('chat', (chatData) => {
       console.log('CHAT DATA SENT!', chatData);
       this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername);
     });
-    socket.on('user disconnect', (onlineUsers) => {
+    this.props.socket.on('user disconnect', (onlineUsers) => {
       this.setState({
         onlineUsers: onlineUsers
       })
 
       console.log('USER DISCONNECT, ACTIVE: ', onlineUsers);
     });
-    socket.on('user connect', (onlineUsers) => {
+    this.props.socket.on('user connect', (onlineUsers) => {
       this.setState({
         onlineUsers: onlineUsers
       });
       console.log('USER CONNECT, ACTIVE: ', onlineUsers);
     });
-    socket.emit('user connect', this.props.userInfo);
+    this.props.socket.emit('user connect', this.props.userInfo);
   }
 
   getUsers() {
@@ -145,7 +152,7 @@ class Chat extends Component {
   }
 
   sendMessage(message) {
-    socket.emit('chat', {
+    this.props.socket.emit('chat', {
       newMessage: message,
       receiverInfo: this.state.currentChatData.friend,
       senderId: this.props.userInfo.userId,
@@ -164,6 +171,8 @@ class Chat extends Component {
   updateChats(message, friendId, friendUsername) {
     //check if the user who sent the message is currently being displayed.
     if(this.state.currentChatData.friend.id === friendId) {
+      console.log('current state: ', this.state.currentChatData);
+      console.log('friendId passed', friendId);
       let updatedData = Object.assign({}, this.state.currentChatData);
       updatedData.messages.push({
         sender_id: this.state.currentChatData.friend.id,
@@ -221,15 +230,25 @@ class Chat extends Component {
         {
           friend: {
             username: '', 
-            imageUrl: ''
+            imageUrl: '',
+            id: null
           },
           messages: []
         }
     });
-    socket.close();
+    this.props.socket.close();
     this.props.logUserOut();
   }
+  removeListeners() {
+    this.props.socket.off('chat');
+    this.props.socket.off('user connect');
+    this.props.socket.off('user disconnect');
+    console.log('removing listeners...');
+  }
 
+  componentWillUnmount() {
+    this.removeListeners();
+  }
   render() {
     return (
       <div>
