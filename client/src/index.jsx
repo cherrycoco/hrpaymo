@@ -73,10 +73,9 @@ class App extends React.Component {
       this.setState({
         wallets: response.data
       });
-      console.log(this.state.wallets)
     })
     .catch((err) =>{
-      console.error(err);
+      console.error('get wallet error:', err);
     });
   }
 
@@ -91,10 +90,9 @@ class App extends React.Component {
     axios(endpoint, {params: params})
       .then((response) => {
         this.prependNewTransactions(feedType, response.data);
-        console.log('feed', response.data);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('get feed error:', err);
       });
   }
 
@@ -163,7 +161,7 @@ class App extends React.Component {
         localStorage.setItem('user', JSON.stringify(response.data));
       })
       .catch((err) =>{
-        console.error(err);
+        console.error('get userinfo error:', err);
       });
   }
 
@@ -267,7 +265,7 @@ class App extends React.Component {
             />
             <Route 
               exact path="/login" 
-              render={routeProps => <Login {...routeProps} logUserIn={this.logUserIn.bind(this)} />} 
+              render={routeProps => <Login {...routeProps} getWallets={this.getWallets.bind(this)} logUserIn={this.logUserIn.bind(this)} />} 
             />
             <Route
             exact path="/userAnalytics"

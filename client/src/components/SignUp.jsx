@@ -47,7 +47,6 @@ class SignUp extends React.Component {
       let userId = response.data.userId;
       this.props.logUserIn(userId);
       this.props.history.push('/');
-      console.log('response', userId);
     })
     .catch((error) => {
       if (error.response && error.response.status === 422) {

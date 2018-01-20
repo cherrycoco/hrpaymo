@@ -10,6 +10,7 @@ const _ = require('underscore');
 const setSocketListeners = require('./sockets');
 const lib = require('../lib')
 const sms = require('./sms');
+const bcrypt = require('bcrypt');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,17 +30,22 @@ app.post('/login', (req, res) => {
       res.status(500).json(err);
     } else {
       if (row.length) {
-        if (row[0].password === password) {
-          res.status(200).json({ userId: row[0].id });
-        } else {
-          res.status(401).json({ error : "Incorrect password"});
-        }
-      } else{
-        res.status(401).json({ error : "Invalid username"});
+        let hashedPassword = row[0].password;
+        bcrypt.compare(password, hashedPassword, function(err, result) {
+          if (err) {
+            res.status(401).json({ error : "Invalid username"});
+          } else {
+            if (result === true) {
+              res.status(200).json({ userId: row[0].id });
+            } else {
+              res.status(401).json({ error : "Incorrect password"});
+            }
+          }
+        })
       }
     }
-  });
-});
+  })
+})
 
 app.get('/usernames', (req, res) => {
   db.getUsernames(parseInt(_.escape(req.query.userId)))
@@ -113,7 +119,7 @@ app.get('/balance', (req, res) => {
 
 app.get('/wallets', (req, res) => {
   let userId = req.query.userId;
-  db.profile.getBalance(parseInt(_.escape(userId.replace(/"/g,"'"))), (err, rows) => {
+  db.profile.getBalance(userId, (err, rows) => {
     if (err) {
       console.error("Error retrieving from database: ", err);
       res.status(500).json(err);
@@ -126,7 +132,6 @@ app.get('/wallets', (req, res) => {
     }
   });
 });
-
 
 app.post('/signup', (req, res) => {
   // check to see if req fields are empty
@@ -200,24 +205,7 @@ app.post('/pay', (req, res) => {
     } else {
       res.status(422).json({ error: 'Insufficient funds.' });
     }
-  })
-//     .then(result => {
-//       if (result === 'Transaction Successful') {
-//         res.status(201).json(result);
-//       } else {
-//         res.status(422).json({ error: 'Insufficient funds.' });
-//       }
-//     })
-//     .catch(err => {
-//       console.error('error on payment:', err.message);
-//       if(err.message.includes('Insufficient funds')) {
-//         res.status(422).json({ error: 'Insufficient funds.' });
-//       } else if(err.message.includes('Invalid payee username')) {
-//         res.status(422).json({ error: 'Invalid payee username.' });
-//       } else {
-//         res.status(400).json({ error : 'Improper format.' })
-//       }
-//     })
+  });
 });
 
 
