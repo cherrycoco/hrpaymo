@@ -188,18 +188,6 @@ class Chat extends Component {
   updateChats(message, friendId, friendUsername) {
     //check if the user who sent the message is currently being displayed.
     if(this.state.currentChatData.friend.id === friendId) {
-      console.log('current state: ', this.state.currentChatData);
-      console.log('friendId passed', friendId);
-      // let updatedData = Object.assign({}, this.state.currentChatData);
-      // updatedData.messages.push({
-      //   sender_id: this.state.currentChatData.friend.id,
-      //   receiver_id: this.props.userInfo.userId,
-      //   chat: message
-      // });
-  
-      // this.setState({
-      //   currentChatData: updatedData
-      // });
       this.updateCurrentChats(this.state.currentChatData.friend.id, this.props.userInfo.userId, message);
     } else {
       let notifications = Object.assign({}, this.state.notifications);
