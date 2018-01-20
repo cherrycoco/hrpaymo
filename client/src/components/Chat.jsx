@@ -121,7 +121,7 @@ class Chat extends Component {
     this.getUsers();
     this.props.socket.on('chat', (chatData) => {
       console.log('CHAT DATA SENT!', chatData);
-      this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername);
+      this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername, chatData.date);
     });
     this.props.socket.on('user disconnect', (onlineUsers) => {
       this.setState({
@@ -152,15 +152,17 @@ class Chat extends Component {
   }
 
   sendMessage(message) {
+    let messageDate = new Date().toISOString();
     this.props.socket.emit('chat', {
       newMessage: message,
       receiverInfo: this.state.currentChatData.friend,
       senderId: this.props.userInfo.userId,
-      senderUsername: this.props.userInfo.username
+      senderUsername: this.props.userInfo.username,
+      date: messageDate
     });
     // this.updateChats(message, this.state.currentChatData.friend.id);
-    console.log('MESSAGE FOR UPDATE', message);
-    this.updateCurrentChats(this.props.userInfo.userId, this.state.currentChatData.friend.id, message);
+    console.log('MESSAGE FOR UPDATE', message, messageDate);
+    this.updateCurrentChats(this.props.userInfo.userId, this.state.currentChatData.friend.id, message, messageDate);
 
     this.postMessage(this.props.userInfo.username, this.state.currentChatData.friend.username, message)
     .then((res) => {
@@ -171,12 +173,13 @@ class Chat extends Component {
 
   }
 
-  updateCurrentChats(sender, receiver, message) {
+  updateCurrentChats(sender, receiver, message, date) {
     let updatedData = Object.assign({}, this.state.currentChatData);
     updatedData.messages.push({
       sender_id: sender,
       receiver_id: receiver,
-      chat: message
+      chat: message,
+      date: date
     });
 
     this.setState({
@@ -185,10 +188,10 @@ class Chat extends Component {
   }
 
 
-  updateChats(message, friendId, friendUsername) {
+  updateChats(message, friendId, friendUsername, date) {
     //check if the user who sent the message is currently being displayed.
     if(this.state.currentChatData.friend.id === friendId) {
-      this.updateCurrentChats(this.state.currentChatData.friend.id, this.props.userInfo.userId, message);
+      this.updateCurrentChats(this.state.currentChatData.friend.id, this.props.userInfo.userId, message, date);
     } else {
       let notifications = Object.assign({}, this.state.notifications);
       console.log('STATUS OF NOTIFICATIONS', notifications[friendUsername]);
@@ -205,6 +208,16 @@ class Chat extends Component {
     delete notifications[friendUsername]
 
     this.getChatHistory(friendUsername, (data) => {
+      data.messages.sort((a,b) => {
+        if (a.date < b.date) {
+          return -1;
+        }
+        if (a.date > b.date) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      });
       this.setState({
         currentChatData: data,
         notifications: notifications

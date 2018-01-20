@@ -64,7 +64,8 @@ let chatEvents = (socket, io) => {
       socket.broadcast.to(socketId).emit('chat', {
         message: chatData.newMessage,
         friendId: chatData.senderId,
-        friendUsername: chatData.senderUsername
+        friendUsername: chatData.senderUsername,
+        date: chatData.date
       });
     }
   });
