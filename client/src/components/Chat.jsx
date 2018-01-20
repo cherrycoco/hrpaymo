@@ -158,7 +158,9 @@ class Chat extends Component {
       senderId: this.props.userInfo.userId,
       senderUsername: this.props.userInfo.username
     });
-    this.updateChats(message, this.state.currentChatData.friend.id);
+    // this.updateChats(message, this.state.currentChatData.friend.id);
+    console.log('MESSAGE FOR UPDATE', message);
+    this.updateCurrentChats(this.props.userInfo.userId, this.state.currentChatData.friend.id, message);
 
     this.postMessage(this.props.userInfo.username, this.state.currentChatData.friend.username, message)
     .then((res) => {
@@ -168,21 +170,37 @@ class Chat extends Component {
     })
 
   }
+
+  updateCurrentChats(sender, receiver, message) {
+    let updatedData = Object.assign({}, this.state.currentChatData);
+    updatedData.messages.push({
+      sender_id: sender,
+      receiver_id: receiver,
+      chat: message
+    });
+
+    this.setState({
+      currentChatData: updatedData
+    });
+  }
+
+
   updateChats(message, friendId, friendUsername) {
     //check if the user who sent the message is currently being displayed.
     if(this.state.currentChatData.friend.id === friendId) {
       console.log('current state: ', this.state.currentChatData);
       console.log('friendId passed', friendId);
-      let updatedData = Object.assign({}, this.state.currentChatData);
-      updatedData.messages.push({
-        sender_id: this.state.currentChatData.friend.id,
-        receiver_id: this.props.userInfo.userId,
-        chat: message
-      });
+      // let updatedData = Object.assign({}, this.state.currentChatData);
+      // updatedData.messages.push({
+      //   sender_id: this.state.currentChatData.friend.id,
+      //   receiver_id: this.props.userInfo.userId,
+      //   chat: message
+      // });
   
-      this.setState({
-        currentChatData: updatedData
-      });
+      // this.setState({
+      //   currentChatData: updatedData
+      // });
+      this.updateCurrentChats(this.state.currentChatData.friend.id, this.props.userInfo.userId, message);
     } else {
       let notifications = Object.assign({}, this.state.notifications);
       console.log('STATUS OF NOTIFICATIONS', notifications[friendUsername]);
