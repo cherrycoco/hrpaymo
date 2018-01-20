@@ -7,7 +7,7 @@ const db = require('../database/queries.js');
 const helpers = require('./helpers.js');
 var path = require('path');
 const _ = require('underscore');
-const setSocketListeners = require('./sockets');
+const sockets = require('./sockets');
 const lib = require('../lib')
 const sms = require('./sms');
 const bcrypt = require('bcrypt');
@@ -389,7 +389,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '..' , './client/dist/index.html'));
 });
 
-setSocketListeners(io);
+sockets.setSocketListeners(io);
 
 module.exports = https;
 

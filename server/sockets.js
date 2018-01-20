@@ -20,9 +20,10 @@ let isUserInList = (arrayOfUsers, user) => {
     return true;
   } else {
     console.log('NEW USER LET HIM IN!');
-    false;
+    return false;
   }
 }
+
 let userEvents = (socket, io) => {
   socket.on('user connect', (userData) => {
     if(!isUserInList(onlineUsers, userData)) {
@@ -71,4 +72,10 @@ let chatEvents = (socket, io) => {
   });
 }
 
-module.exports = setSocketListeners;
+module.exports = {
+  setSocketListeners: setSocketListeners,
+  forTest: {
+    isUserInList: isUserInList,
+    getUserSocketId: getUserSocketId
+  }
+}
