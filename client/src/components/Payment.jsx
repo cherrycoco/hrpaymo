@@ -156,7 +156,7 @@ class Payment extends React.Component {
   }
 
   getExchangeRate () {
-    axios.get('http://apilayer.net/api/live', 
+    axios.get('https://apilayer.net/api/live', 
     {params: {access_key: '6c3938f9ca0181b6c222db4d74c0dffb',
               currencies: `${this.state.currency_from_type}, ${this.state.currency_to_type}`}
     }).then(response => {
