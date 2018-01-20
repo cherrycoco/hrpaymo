@@ -2,16 +2,6 @@ const pg = require('./index.js').pg;
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-// bcrypt.hash('1234', saltRounds, (err, hash) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     password = hash;
-//   }
-// });
-
-// setTimeout(() => console.log(password), 200);
-
 const newUserSignup = function(user, cb) {
   return new Promise ((resolve, reject) => {
     bcrypt.hash(user.password, saltRounds, (err, result) => {
@@ -22,7 +12,6 @@ const newUserSignup = function(user, cb) {
       }
     })
   }).then(result => {
-    console.log('password', result);
     let userId;
     let balanceInserts = [];
   
@@ -35,11 +24,9 @@ const newUserSignup = function(user, cb) {
       email: user.email,
       avatar_url: user.avatarUrl ? signupData.avatarUrl : null
     }
-    console.log('userinfo', userInfo);
     return pg.insert(userInfo, 'id').into('users')
     .then(id => {
       userId = id[0];
-      console.log('userId', userId);
       for(let i = 0; i < user.wallets.length; i++) {
         balanceInserts.push({
           user_id: userId,
@@ -47,11 +34,9 @@ const newUserSignup = function(user, cb) {
           currency_type: user.wallets[i]
         });
       }
-      console.log('bb', balanceInserts)
       pg.batchInsert('balance', balanceInserts, user.wallets.length);
       return userId;
     }).then((userId) => {
-      console.log('userId hereee', userId);
       return userId;
     });
   }).catch (err => err);

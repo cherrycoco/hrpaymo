@@ -5,23 +5,32 @@ class Wallets extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      wallets: [],
       currentWallet: {},
     };
     this.renderWallets.bind(this);
   }
 
   componentDidMount () {
-    // setTimeout(() => this.setState({
-    //   wallets: this.props.wallets
-    // }), 200);
+    this.setState({
+      wallets: this.props.wallets
+    });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if(this.props.wallets !== nextProps.wallets) {
+      this.setState({
+        wallets: this.props.wallets
+      });
+    }  
+  } 
+
   renderWallets () {
-    return this.props.wallets.map((wallet, idx) => {
+    return this.state.wallets.map((wallet, idx) => {
       return (
         <div key={idx} className='wallet-button'>
           <button 
-            style={{width: 330 / this.props.wallets.length}}
+            style={{width: 330 / this.state.wallets.length}}
             onClick={(e) => this.renderCurrentWallet(e.target.value)} 
             value={wallet.currency_type}>
             {wallet.currency_type}
