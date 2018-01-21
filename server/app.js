@@ -144,6 +144,7 @@ app.post('/signup', (req, res) => {
       res.status(400).json({ error: "Improper format." });
       return;
     }
+    console.log(req.body);
 
   let signupData = {};
   for(let key in req.body) {
@@ -153,7 +154,7 @@ app.post('/signup', (req, res) => {
       signupData[key] = req.body[key];
     }
   }
-  db.signup.newUserSignup(req.body)
+  db.signup.newUserSignup(signupData)
     .then(userId => {
       res.status(201).json({ userId: userId });
     })

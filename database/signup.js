@@ -22,7 +22,7 @@ const newUserSignup = function(user, cb) {
       password: result,
       phone: user.phone,
       email: user.email,
-      avatar_url: user.avatarUrl ? signupData.avatarUrl : null
+      avatar_url: user.avatarUrl
     }
     return pg.insert(userInfo, 'id').into('users')
     .then(id => {
