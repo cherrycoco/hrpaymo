@@ -164,6 +164,42 @@ class Payment extends React.Component {
         amount_to: amountTo
       });
     })
+    .catch(err => {
+      console.error(err);
+    })
+  }
+
+  calcfxRate (fxObj) {
+    let currencyFrom = `USD${this.state.currency_from_type}`;
+    let currencyTo = `USD${this.state.currency_to_type}`;
+
+    let result = this.state.amount / fxObj[currencyFrom] * fxObj[currencyTo];
+    console.log(result);
+    result = parseFloat(result).toFixed(2);
+    return result;
+  }
+
+  getExchangeRate () {
+    axios.get('/exchangeRate', {params: {
+      currencyFrom: this.state.currency_from_type, 
+      currencyTo: this.state.currency_to_type
+    }}).then(response => {
+      console.log(response.data);
+      let amountTo = this.calcfxRate (response.data);
+      this.setState({
+        amount_to: amountTo
+      });
+    })
+    // axios.get('http://apilayer.net/api/live', 
+    // {params: {access_key: '6c3938f9ca0181b6c222db4d74c0dffb',
+    //           currencies: `${this.state.currency_from_type}, ${this.state.currency_to_type}`}
+    // }).then(response => {
+    //   console.log(response.data.quotes);
+    //   let amountTo = this.calcfxRate (response.data.quotes);
+    //   this.setState({
+    //     amount_to: amountTo
+    //   });
+    // })
   }
 
   payUser() {
