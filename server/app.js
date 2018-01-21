@@ -11,6 +11,7 @@ const setSocketListeners = require('./sockets');
 const lib = require('../lib')
 const sms = require('./sms');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -171,6 +172,15 @@ app.post('/signup', (req, res) => {
     })
 })
 
+app.get('/exchangeRate', (req, res) => {
+  axios.get('http://apilayer.net/api/live', 
+    {params: {access_key: '6c3938f9ca0181b6c222db4d74c0dffb',
+              currencies: `${req.query.currencyFrom}, ${req.query.currencyTo}`}
+    }).then(response => {
+      res.send(response.data.quotes);
+    })
+})
+
 app.post('/pay', (req, res) => {
   // TODO: check if user is still logged in (i.e. check cookie) here. If not, send back appropriate error response.
   let paymentData = {};
@@ -182,23 +192,7 @@ app.post('/pay', (req, res) => {
     res.status(400).json({ error : 'Improper format.' });
     return;
   }
-  // db.payment(paymentData)
-  //   .then(({balance, transactionId}) => {
-  //     lib.notify.notifyTransaction(transactionId);
-  //   // .then(balance => {
-  //     // sms.notifyTransaction(transactionId);
-  //     res.status(201).json({ balance: balance });
-  //   })
-  //   .catch(err => {
-  //     console.error('error on payment:', err.message);
-  //     if(err.message.includes('Insufficient funds')) {
-  //       res.status(422).json({ error: 'Insufficient funds.' });
-  //     } else if(err.message.includes('Invalid payee username')) {
-  //       res.status(422).json({ error: 'Invalid payee username.' });
-  //     } else {
-  //       res.status(400).json({ error : 'Improper format.' })
-  //     }
-  //   })
+
   db.payment(paymentData, (err, transactionId) => {
     if (transactionId) {
       lib.notify.notifyTransaction(transactionId);
