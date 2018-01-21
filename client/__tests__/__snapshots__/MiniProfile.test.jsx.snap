@@ -4,6 +4,7 @@ exports[`renders a snapshot of miniprofile 1`] = `
 <div>
   <div
     className="feed-container"
+    id="mini-profile"
     style={
       Object {
         "WebkitTapHighlightColor": "rgba(0,0,0,0)",
@@ -39,7 +40,7 @@ exports[`renders a snapshot of miniprofile 1`] = `
       <div
         style={
           Object {
-            "paddingBottom": 8,
+            "paddingBottom": 0,
           }
         }
       >
@@ -124,43 +125,14 @@ exports[`renders a snapshot of miniprofile 1`] = `
               <div
                 className="member-tag"
               >
-                <span>
-                   (
+                <p>
+                  @
                   blam92
-                  )
-                </span>
+                </p>
+                <p />
               </div>
             </span>
           </div>
-        </div>
-        <hr
-          style={
-            Object {
-              "backgroundColor": "#e0e0e0",
-              "border": "none",
-              "height": 1,
-              "margin": 0,
-              "marginLeft": 0,
-              "marginTop": -1,
-              "muiPrepared": true,
-            }
-          }
-        />
-        <div
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.87)",
-              "fontSize": "18px",
-              "marginLeft": "125px",
-              "muiPrepared": true,
-              "padding": 16,
-            }
-          }
-        >
-          <strong>
-            $
-            100.00
-          </strong>
         </div>
       </div>
     </div>
