@@ -3,6 +3,7 @@ let chai = require('chai');
 var expect = chai.expect;
 let openSocket = require('socket.io-client');
 var port = 4444;
+var socketFunctions = require('../server/sockets');
 
 
 let onlineUsers = [];
@@ -43,5 +44,25 @@ describe('Chat service', function() {
     });
 
     done();
+  });
+});
+
+describe('Search for users in online user list', function() {
+  let onlineUsers = [];
+  it('Should return false if list is empty', function() {
+    let user = {username: 'blam92', userId: 1};
+    let found = socketFunctions.forTest.isUserInList(onlineUsers, user);
+    expect(found).to.equal(false);
+  });
+
+  it('Should return true if user is found', function() {
+    let user = {username: 'blam92', userId: 1};
+    onlineUsers.push({
+      userData: user,
+      friend: {}
+    });
+    
+    let found = socketFunctions.forTest.isUserInList(onlineUsers, {username: 'test', userId: 1});
+    expect(found).to.equal(true);
   });
 });

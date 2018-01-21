@@ -23,7 +23,7 @@ import DataAnalytics from './components/DataAnalytics.jsx'
 
 // ---------- Helper ---------- //
 import feedManipulation from './feedManipulation.js'
-
+import openSocket from 'socket.io-client';
 const muiTheme = getMuiTheme({
   palette: {
     primary1Color: '#3D95CE',
@@ -39,7 +39,8 @@ class App extends React.Component {
       userFeed: {},
       balance: null,
       userInfo: {},
-      wallets: []
+      wallets: [],
+      socket: null
     }
     this.logUserOut = this.logUserOut.bind(this);
   }
@@ -53,6 +54,11 @@ class App extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({
+      socket: openSocket('/')
+    })
+  }
   loadUserData(userId) {
     this.getUserInfo(userId);
     this.getBalance(userId);
@@ -257,7 +263,8 @@ class App extends React.Component {
           <Route 
               exact path="/chat"  
               render={routeProps => <Chat {...routeProps} userInfo={this.state.userInfo} 
-              isLoggedIn={this.state.isLoggedIn} logUserOut={this.logUserOut}/>}
+              isLoggedIn={this.state.isLoggedIn} logUserOut={this.logUserOut}
+              socket={this.state.socket}/>}
             />
             <Route 
               exact path="/signup" 

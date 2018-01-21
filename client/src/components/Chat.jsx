@@ -3,12 +3,8 @@ import axios from 'axios';
 import FriendList from './ChatFriendList.jsx';
 import {ChatMessages, ChatBox} from './ChatMessages.jsx';
 import Navbar from './Navbar.jsx';
-import openSocket from 'socket.io-client';
-const socket = openSocket('/');
-
-//REMOVE AFTER
-import Badge from 'material-ui/Badge';
-import CommunicationChatBubble from 'material-ui/svg-icons/communication/chat-bubble';
+// import openSocket from 'socket.io-client';
+// let socket;
 
 const fakeData = [
   {
@@ -93,45 +89,54 @@ const styles = {
   }
 };
 
+let emptyChatData = {
+  friend: {
+    username: '', 
+    imageUrl: '',
+    id: null
+  },
+  messages: []
+}
+
 class Chat extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       users: [],
-      chats: fakeData,
       onlineUsers: [],
-      currentChatData: {
-        friend: {
-          username: '', 
-          imageUrl: ''
-        },
-        messages: []
-      },
+      currentChatData: emptyChatData,
       notifications: {}
     }
     this.sendMessage = this.sendMessage.bind(this);
     this.openChatWithFriend = this.openChatWithFriend.bind(this);
+    this.logOutAndDisconnect = this.logOutAndDisconnect.bind(this);
   }
   componentDidMount() {
-    this.getUsers();
-    socket.on('chat', (chatData) => {
-      this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername);
+    // socket = openSocket('/');
+    this.setState({
+      currentChatData: emptyChatData
     });
-    socket.on('user disconnect', (onlineUsers) => {
+
+    this.getUsers();
+    this.props.socket.on('chat', (chatData) => {
+      console.log('CHAT DATA SENT!', chatData);
+      this.updateChats(chatData.message, chatData.friendId, chatData.friendUsername, chatData.date);
+    });
+    this.props.socket.on('user disconnect', (onlineUsers) => {
       this.setState({
         onlineUsers: onlineUsers
       })
 
       console.log('USER DISCONNECT, ACTIVE: ', onlineUsers);
     });
-    socket.on('user connect', (onlineUsers) => {
+    this.props.socket.on('user connect', (onlineUsers) => {
       this.setState({
         onlineUsers: onlineUsers
       });
       console.log('USER CONNECT, ACTIVE: ', onlineUsers);
     });
-    socket.emit('user connect', this.props.userInfo);
+    this.props.socket.emit('user connect', this.props.userInfo);
   }
 
   getUsers() {
@@ -147,13 +152,17 @@ class Chat extends Component {
   }
 
   sendMessage(message) {
-    socket.emit('chat', {
+    let messageDate = new Date().toISOString();
+    this.props.socket.emit('chat', {
       newMessage: message,
       receiverInfo: this.state.currentChatData.friend,
       senderId: this.props.userInfo.userId,
-      senderUsername: this.props.userInfo.username
+      senderUsername: this.props.userInfo.username,
+      date: messageDate
     });
-    this.updateChats(message, this.state.currentChatData.friend.id);
+    // this.updateChats(message, this.state.currentChatData.friend.id);
+    console.log('MESSAGE FOR UPDATE', message, messageDate);
+    this.updateCurrentChats(this.props.userInfo.userId, this.state.currentChatData.friend.id, message, messageDate);
 
     this.postMessage(this.props.userInfo.username, this.state.currentChatData.friend.username, message)
     .then((res) => {
@@ -163,19 +172,26 @@ class Chat extends Component {
     })
 
   }
-  updateChats(message, friendId, friendUsername) {
+
+  updateCurrentChats(sender, receiver, message, date) {
+    let updatedData = Object.assign({}, this.state.currentChatData);
+    updatedData.messages.push({
+      sender_id: sender,
+      receiver_id: receiver,
+      chat: message,
+      date: date
+    });
+
+    this.setState({
+      currentChatData: updatedData
+    });
+  }
+
+
+  updateChats(message, friendId, friendUsername, date) {
     //check if the user who sent the message is currently being displayed.
     if(this.state.currentChatData.friend.id === friendId) {
-      let updatedData = Object.assign({}, this.state.currentChatData);
-      updatedData.messages.push({
-        sender_id: this.state.currentChatData.friend.id,
-        receiver_id: this.props.userInfo.userId,
-        chat: message
-      });
-  
-      this.setState({
-        currentChatData: updatedData
-      });
+      this.updateCurrentChats(this.state.currentChatData.friend.id, this.props.userInfo.userId, message, date);
     } else {
       let notifications = Object.assign({}, this.state.notifications);
       console.log('STATUS OF NOTIFICATIONS', notifications[friendUsername]);
@@ -192,6 +208,16 @@ class Chat extends Component {
     delete notifications[friendUsername]
 
     this.getChatHistory(friendUsername, (data) => {
+      data.messages.sort((a,b) => {
+        if (a.date < b.date) {
+          return -1;
+        }
+        if (a.date > b.date) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      });
       this.setState({
         currentChatData: data,
         notifications: notifications
@@ -217,12 +243,37 @@ class Chat extends Component {
     });
   }
 
+  logOutAndDisconnect() {
+    this.setState({
+      currentChatData: 
+        {
+          friend: {
+            username: '', 
+            imageUrl: '',
+            id: null
+          },
+          messages: []
+        }
+    });
+    this.props.socket.close();
+    this.props.logUserOut();
+  }
+  removeListeners() {
+    this.props.socket.off('chat');
+    this.props.socket.off('user connect');
+    this.props.socket.off('user disconnect');
+    console.log('removing listeners...');
+  }
+
+  componentWillUnmount() {
+    this.removeListeners();
+  }
   render() {
     return (
       <div>
         <Navbar 
         isLoggedIn={this.props.isLoggedIn} 
-        logUserOut={this.props.logUserOut}
+        logUserOut={this.logOutAndDisconnect}
         />
         <div style={styles.container}>
           <div style={styles.friendList} className="friend-list">

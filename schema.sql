@@ -49,7 +49,8 @@ CREATE TABLE MESSAGES (
   id SERIAL PRIMARY KEY,
   sender_id INT REFERENCES USERS(id) NOT NULL,
   receiver_id INT REFERENCES USERS(id) NOT NULL,
-  chat VARCHAR(1000)
+  chat VARCHAR(1000),
+  date timestamp default current_timestamp
 );
 
 CREATE TABLE reactions (

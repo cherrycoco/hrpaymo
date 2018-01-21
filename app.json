@@ -15,5 +15,28 @@
     {
       "url": "heroku/nodejs"
     }
-  ]
+  ],
+  "env": {
+    "ACCOUNT_SECURITY_API_KEY": {
+      "required": true
+    },
+    "DATABASE_URL": {
+      "required": true
+    },
+    "ENABLE_SMS": {
+      "required": true
+    },
+    "TEST_SECURITY_API_KEY": {
+      "required": true
+    },
+    "TWILIO_ACCOUNT_SID": {
+      "required": true
+    },
+    "TWILIO_AUTH_TOKEN": {
+      "required": true
+    },
+    "TWILIO_PHONE_NUMBER": {
+      "required": true
+    }
+  }
 }

@@ -5,6 +5,9 @@ import FeedContainer from './FeedContainer.jsx';
 import MiniProfile from './MiniProfile.jsx';
 import VerifyPhone from './VerifyPhone.jsx';
 import Wallets from './Wallets.jsx';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 
 class Home extends React.Component {
   constructor (props) {

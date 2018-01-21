@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a snapshot of miniprofile 1`] = `
+<div>
+  <div
+    className="feed-container"
+    id="mini-profile"
+    style={
+      Object {
+        "WebkitTapHighlightColor": "rgba(0,0,0,0)",
+        "backgroundColor": "#ffffff",
+        "borderRadius": 2,
+        "boxShadow": "0 1px 6px rgba(0, 0, 0, 0.12),
+         0 1px 4px rgba(0, 0, 0, 0.12)",
+        "boxSizing": "border-box",
+        "color": "rgba(0, 0, 0, 0.87)",
+        "fontFamily": "Roboto, sans-serif",
+        "muiPrepared": true,
+        "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "WebkitTapHighlightColor": "rgba(0,0,0,0)",
+          "backgroundColor": "#ffffff",
+          "borderRadius": 2,
+          "boxShadow": "0 1px 6px rgba(0, 0, 0, 0.12),
+         0 1px 4px rgba(0, 0, 0, 0.12)",
+          "boxSizing": "border-box",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "fontFamily": "Roboto, sans-serif",
+          "muiPrepared": true,
+          "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+          "zIndex": 1,
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "paddingBottom": 0,
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "boxSizing": "border-box",
+              "fontWeight": 500,
+              "muiPrepared": true,
+              "padding": 16,
+              "position": "relative",
+              "whiteSpace": "nowrap",
+            }
+          }
+        >
+          <img
+            className={undefined}
+            size={100}
+            src="/images/no-image.gif"
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "rgb(188, 188, 188)",
+                "borderRadius": "50%",
+                "color": "#ffffff",
+                "display": "inline-flex",
+                "fontSize": 50,
+                "height": 100,
+                "justifyContent": "center",
+                "marginRight": 16,
+                "muiPrepared": true,
+                "userSelect": "none",
+                "width": 100,
+              }
+            }
+          />
+          <div
+            style={
+              Object {
+                "display": "inline-block",
+                "muiPrepared": true,
+                "paddingRight": "90px",
+                "verticalAlign": "top",
+                "whiteSpace": "normal",
+              }
+            }
+          >
+            <span
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, 0.87)",
+                  "display": "block",
+                  "fontSize": 15,
+                  "muiPrepared": true,
+                }
+              }
+            >
+              <div>
+                <span
+                  style={
+                    Object {
+                      "fontSize": "20px",
+                      "fontWeight": 700,
+                      "margin": "10px",
+                    }
+                  }
+                >
+                  Santi Iraola
+                </span>
+              </div>
+            </span>
+            <span
+              style={
+                Object {
+                  "color": "rgba(0, 0, 0, 0.54)",
+                  "display": "block",
+                  "fontSize": 14,
+                  "muiPrepared": true,
+                }
+              }
+            >
+              <div
+                className="member-tag"
+              >
+                <p>
+                  @
+                  blam92
+                </p>
+                <p />
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
