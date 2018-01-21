@@ -56,23 +56,13 @@ class UserBarChart extends React.Component {
       }, 0)
 
       this.setState({
-        chart: [{Name: 'Jarrod', Spent: payTotal, Earned: payeeTotal}]
+        chart: [{Name: this.props.userInfo.username, Spent: payTotal, Earned: payeeTotal}]
       })
 
     })
     .catch( (err) => {
       console.log(err.message)
-    })
-
-    axios('/usernames', { params: { userId: this.props.userInfo.userId }})
-    .then(response => {
-      this.setState({
-        usernames: response.data.usernames
-      });
-    })
-    .catch(err => {
-      console.error(err);
-    })    
+    })  
   }
 
   onDropdownInput(searchText) {
@@ -106,7 +96,7 @@ class UserBarChart extends React.Component {
     return (
       <div className="form-box">
         <div className="payment-username home-rightColumn">
-          <span className="form">Payment Statistics</span>
+          <h3 className="form">Payment Statistics</h3>
           <AutoComplete
             hintText="Type Username: "
             floatingLabelText="Find a Friend's Pay Stats"

@@ -217,14 +217,26 @@ app.get('/userData/totaltransactions/:username', (req, res) => {
 
 app.get('/userData/totalwordcount/:username', (req, res) => {
 
-  var username = req.params.username;
-  db.userAnalytics.getAllUserNotes(username, (err, noteList) => {
+  var myUser = req.params.username;
+  db.userAnalytics.getAllUserNotes(myUser, (err, noteList) => {
     if (err) {
       console.log(err.message)
       res.status(503).end();
       return;
     }
     res.status(200).send(noteList);
+  })
+})
+
+app.get('/emoji/' , (req, res) => {
+  var note = req.query.note;
+  db.userAnalytics.getEmoji(note, (err, emojiList) => {
+    if (err) {
+      console.log(err.message)
+      res.status(503).end();
+      return;
+    }
+    res.status(200).send(emojiList);
   })
 })
 

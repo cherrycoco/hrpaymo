@@ -14,7 +14,7 @@ const style = {
   margin: 50,
   textAlign: 'center',
   display: 'inline-block',
-  color: 'primary'
+  color: 'primary',
 };
 
 
@@ -74,14 +74,23 @@ class DataAnalytics extends React.Component {
       }
     }
     return (
-      <Paper style={style} zDepth={5}>
       <div>
-          <button value="barChart" onClick={this.handleClick.bind(this)}> Bart Chart</button>
-          <button value="pieChart" onClick={this.handleClick.bind(this)}> Pie Chart</button>
-          <button value="radialChart" onClick={this.handleClick.bind(this)}> Radial Chart</button>           
+        <Navbar 
+          isLoggedIn={this.props.isLoggedIn} 
+          logUserOut={this.props.logUserOut} 
+        />
+        <center><h1 >User Data Analytics</h1></center>
+        <div className='body-container'>
+          <Paper style={style} zDepth={5}>
+          <div>
+              <button value="barChart" onClick={this.handleClick.bind(this)}> Payment Stats</button>
+              <button value="pieChart" onClick={this.handleClick.bind(this)}> Transaction Stats</button>
+              <button value="radialChart" onClick={this.handleClick.bind(this)}> Emoji Stats</button>           
+          </div>
+          {statToDisplay()}
+          </Paper> 
+        </div>
       </div>
-      {statToDisplay()}
-      </Paper> 
       )
   }
 }

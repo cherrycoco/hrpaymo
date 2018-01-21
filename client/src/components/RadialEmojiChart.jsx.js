@@ -49,12 +49,17 @@ class RadialEmojiChart extends React.Component {
   }
 
   formatRadialData(data) {
-    var arrayOfWords = data
+    //convert data to an array of all emojis used
+    var arrayOfWords = data.rows
     .map( (wordObj) => {
-      return wordObj.note.toLowerCase().split(' ');
+      if (wordObj.note) {
+        return wordObj.note.toLowerCase().split(' ');
+      } else {
+        return 'empty'
+      }
     })
     .reduce( (a, b) => a.concat(b))
-
+    //count emoji instances
     var countedWords = arrayOfWords.reduce( (allWords, word) => {
       if (word in allWords) {
         allWords[word]++;
@@ -64,16 +69,35 @@ class RadialEmojiChart extends React.Component {
       return allWords;
     }, {})
 
+    //convert emoji count to an array of emoji objects
     var radialData = [];
+
+    var cleanUpWord = function(word) {
+      var truth = false
+      var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+      letters.forEach( (letter) => {
+        if (word.startsWith(letter)) {
+          truth = true;
+        }
+      })
+      return truth;
+    }
+    
     for (var word in countedWords)  {
-      var wordCount = {};
-      wordCount.word = word;
-      wordCount.amount = countedWords[word];
-      radialData.push(wordCount);
+      if (!cleanUpWord(word)) {
+        var wordCount = {};
+        wordCount.word = word;
+        wordCount.amount = countedWords[word];
+        radialData.push(wordCount);    
+      }
     };
 
+    //sort data
+    radialData.sort( (a, b) =>  b.amount - a.amount)
+
+    //display top 5
     this.setState({
-      data: radialData
+      data: radialData.slice(0, 6)
     })
   }
 
@@ -100,7 +124,7 @@ class RadialEmojiChart extends React.Component {
             filter={AutoComplete.caseInsensitiveFilter}
             dataSource={this.props.usernames ? this.props.usernames : []}
             maxSearchResults={7}
-            searchText={this.state.payeeUsername}
+            searchText={this.state.compareUser}
             onUpdateInput = {this.onDropdownInput.bind(this)}
           />
           <button className='btn' onClick={this.searchUserStats.bind(this)}>Search Friend</button>

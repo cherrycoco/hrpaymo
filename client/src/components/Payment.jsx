@@ -5,6 +5,9 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 const style = {
   form: {
@@ -33,7 +36,10 @@ class Payment extends React.Component {
       amount: '',
       note: '',
       paymentFail: false,
-      usernames: []
+      usernames: [],
+      emojis: [],
+      comment: '',
+      open: false
     }
   }
 
@@ -50,10 +56,31 @@ class Payment extends React.Component {
   }
   
   handleInputChanges (event) {
+    // event.preventDefault();
     let target = event.target;
     this.setState({
-      [target.name] : target.value
+      [target.name] : target.value,
+      anchorEl: event.currentTarget
     })
+        // event.preventDefault();
+    this.getEmojiOnNoteChange(target.value);
+  }
+
+  getEmojiOnNoteChange (input) {
+    var commentArray = input.split(' ');
+    var mostRecentWord = commentArray[commentArray.length - 1]
+    if (mostRecentWord.length > 2) {
+      axios.get('/emoji', {params: {note: mostRecentWord}})
+        .then( ({data}) => {
+          var arrayOfEmojis = data.rows.map( (reactionObj) => {
+            return reactionObj.r_emoji;
+          })
+          this.setState({
+            emojis: arrayOfEmojis,
+          })
+        })
+        .catch(err => console.log(err))    
+    }
   }
 
   onDropdownInput(searchText) {
@@ -67,7 +94,7 @@ class Payment extends React.Component {
       payerId: this.props.payerId,
       payeeUsername: !this.state.payeeUsername ? this.props.payeeUsername : this.state.payeeUsername,
       amount: this.state.amount,
-      note: this.state.note
+      note: this.state.comment,
     };
     axios.post('/pay', payment)
       .then((response) => {
@@ -75,7 +102,9 @@ class Payment extends React.Component {
           payeeUsername: '',
           amount: '',
           note: '',
-          paymentFail: false
+          comment: '',
+          paymentFail: false,
+          emojis: []
         });
         this.props.refreshUserData(this.props.payerId);
       })
@@ -99,6 +128,16 @@ class Payment extends React.Component {
           paymentFail: true
         });
       })
+  }
+
+  inputEmojiIntoTextField (emoji) {
+    var myEmoji = emoji.currentTarget.getAttribute('name')
+    var oldText = this.state.comment.split(' ');
+    oldText[oldText.length- 1] = myEmoji
+    this.setState({
+      comment: oldText.join(' '),
+      emojis: []
+    })
   }
 
   render() {
@@ -135,14 +174,15 @@ class Payment extends React.Component {
           <div className="form-box payment-note">
             <TextField
               style={style.input}
-              name='note'
-              value={this.state.note}
-              onChange = {this.handleInputChanges.bind(this)}
-              hintText="for"
+              name="comment"
+              value={this.state.comment}
+              hintText="What's it for?"
               floatingLabelText="Leave a comment"
-              fullWidth={true}
-              multiLine={true}
-            />
+              onChange={this.handleInputChanges.bind(this)}
+            /><br />
+              <Menu disableAutoFocus={true} onItemClick={this.inputEmojiIntoTextField.bind(this)}>
+              {this.state.emojis.map ((emoji) => <MenuItem primaryText={emoji} name={emoji} value={emoji}/>)}
+              </Menu> 
           <br />
           </div>
         </div>
