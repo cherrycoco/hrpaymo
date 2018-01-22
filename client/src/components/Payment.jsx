@@ -225,10 +225,10 @@ class Payment extends React.Component {
           paymentFail: false,
           emojis: [],
           amount_to: '',
-          wallet_from_id: '',
-          wallet_to_id: '',
-          currency_to_type: '',
-          currency_from_type: ''
+          // wallet_from_id: '',
+          // wallet_to_id: '',
+          // currency_to_type: '',
+          // currency_from_type: ''
         });
         setTimeout(() => this.props.refreshUserData(this.props.payerId), 400);
       })
