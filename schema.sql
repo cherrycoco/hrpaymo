@@ -1,8 +1,8 @@
 /*   psql -d postgres -a -f ./schema.sql    */
--- \connect template1;
--- DROP DATABASE IF EXISTS paymo;
--- CREATE DATABASE paymo;
--- \connect paymo;
+\connect template1;
+DROP DATABASE IF EXISTS paymo;
+CREATE DATABASE paymo;
+\connect paymo;
 
 CREATE TABLE USERS (
   id SERIAL PRIMARY KEY,
