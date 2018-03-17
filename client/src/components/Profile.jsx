@@ -5,6 +5,7 @@ import FeedContainer from './FeedContainer.jsx';
 import ProfileHeader from './ProfileHeader.jsx';
 import axios from 'axios';
 import feedManipulation from '../feedManipulation.js'
+import { Link } from "react-router-dom";
 
 class Profile extends React.Component {
   constructor (props) {
@@ -136,6 +137,7 @@ class Profile extends React.Component {
         <Navbar 
           isLoggedIn={this.props.isLoggedIn} 
           logUserOut={this.props.logUserOut} />
+        <Link to="/userAnalytics"><span>Check your stats</span></Link>  
         <div className='body-container'>
           {this.state.unknownUser 
             ? <div>User does not exist</div>
@@ -148,6 +150,7 @@ class Profile extends React.Component {
                     refreshUserData={this.props.refreshUserData}
                     payeeUsername={this.state.profileInfo.username}
                     payerId={this.props.userInfo.userId}
+                    wallets={this.props.wallets}
                   />
                 :
                   null

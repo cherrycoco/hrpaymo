@@ -1,21 +1,30 @@
 {
   "name": "Paymo",
   "version": "1.0.0",
-  "description": "",
+  "description": "Pay your friends!",
   "main": "index.js",
-  "author": "",
-  "license": "",
+  "author": "AirHnR",
+  "license": "MIT",
+  "repository": "https://github.com/AirHnR/hrpaymo",
   "engines": {
     "node": ">=8.7.0",
     "npm": ">=5.4.2"
   },
   "scripts": {
     "heroku-postbuild": "webpack -p --config ./webpack.config.js",
+    "heroku-rebuild-db": "heroku pg:reset postgresql-tapered-30799 --app paymohnr --confirm paymohnr && psql postgres://atdwgvjaxdrygk:f668459b33ef454677556334cc179905902763b23503ad1bab8c2a85fbb4abc0@ec2-54-83-59-144.compute-1.amazonaws.com:5432/dd8gqeqmdklrbs -f schema.sql",
     "react-dev": "webpack -d --watch",
-    "start": "nodemon server/index.js",
-    "test": "mocha test/index.js"
+    "start-dev": "nodemon server/index.js",
+    "enable-sms": "heroku config:set ENABLE_SMS=true",
+    "disable-sms": "heroku config:set ENABLE_SMS=false",
+    "start": "node server/index.js",
+    "create-db": "psql -d postgres -a -f schema.sql",
+    "test": "mocha test --exit && jest ./client",
+    "heroku-pg": "heroku pg:psql postgresql-tapered-30799 --app paymohnr"
   },
   "dependencies": {
+    "authy": "^1.3.0",
+    "authy-client": "^1.1.0",
     "axios": "^0.17.1",
     "babel-cli": "^6.7.5",
     "babel-core": "^6.23.1",
@@ -24,6 +33,7 @@
     "babel-preset-react": "^6.23.0",
     "babel-register": "^6.7.2",
     "babel-runtime": "^6.26.0",
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.0",
@@ -31,24 +41,36 @@
     "knex": "^0.14.2",
     "material-ui": "^0.20.0",
     "moment": "^2.20.1",
-    "nodemon": "^1.14.10",
     "pg": "^7.4.1",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "react-form-validator-core": "^0.3.0",
     "react-material-ui-form-validator": "^1.0.5",
     "react-router-dom": "^4.2.2",
+    "twilio": "^3.11.0",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
+    "recharts": "^1.0.0-beta.9",
     "underscore": "^1.8.3",
     "webpack": "^2.2.1"
   },
   "devDependencies": {
+    "babel-jest": "^22.1.0",
     "chai": "^4.1.2",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-15": "^1.0.5",
+    "jest": "^22.1.3",
     "mocha": "^4.1.0",
+    "nodemon": "^1.14.10",
+    "react-test-renderer": "^15.6.1",
     "supertest": "^3.0.0"
   },
   "babel": {
     "presets": [
       "es2015"
     ]
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./client/setup.js"
   }
 }

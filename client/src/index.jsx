@@ -9,6 +9,8 @@ import axios from 'axios';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+
+
 // ---------- Componenets ---------- //
 import LoggedOutHome from './components/LoggedOutHome.jsx';
 import Home from './components/Home.jsx';
@@ -16,9 +18,12 @@ import Login from './components/Login.jsx';
 import SignUp from './components/SignUp.jsx';
 import Profile from './components/Profile.jsx';
 import Navbar from './components/Navbar.jsx';
+import Chat from './components/Chat.jsx';
+import DataAnalytics from './components/DataAnalytics.jsx'
+
 // ---------- Helper ---------- //
 import feedManipulation from './feedManipulation.js'
-
+import openSocket from 'socket.io-client';
 const muiTheme = getMuiTheme({
   palette: {
     primary1Color: '#3D95CE',
@@ -33,15 +38,29 @@ class App extends React.Component {
       globalFeed: {},
       userFeed: {},
       balance: null,
-      userInfo: {}
+      userInfo: {},
+      wallets: [],
+      socket: null
     }
+    this.logUserOut = this.logUserOut.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // if (prevState.userInfo !== this.state.userInfo) {
+    //   this.getWallets();
+    // }
+    // if (prevState.userFeed !== this.state.userFeed) {
+    //   this.getWallets();
+    // }
   }
 
   componentDidMount() {
+    this.setState({
+      socket: openSocket('/')
+    })
   }
-
   loadUserData(userId) {
-    this.getUserInfo(userId)
+    this.getUserInfo(userId);
     this.getBalance(userId);
     this.getFeed('globalFeed', userId);
     this.getFeed('userFeed', userId);
@@ -49,8 +68,21 @@ class App extends React.Component {
 
   refreshUserData(userId) {
     this.getBalance(userId);
+    this.getWallets(userId);
     this.getFeed('globalFeed', userId, this.state.globalFeed.newestTransactionId || null);
     this.getFeed('userFeed', userId, this.state.userFeed.newestTransactionId || null);
+  }
+
+  getWallets (userId) {
+    axios('/wallets', {params: {userId: userId}})
+    .then((response) => {
+      this.setState({
+        wallets: response.data
+      });
+    })
+    .catch((err) =>{
+      console.error('get wallet error:', err);
+    });
   }
 
   getFeed(feedType, userId = null, sinceId) {
@@ -66,7 +98,7 @@ class App extends React.Component {
         this.prependNewTransactions(feedType, response.data);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('get feed error:', err);
       });
   }
 
@@ -132,9 +164,10 @@ class App extends React.Component {
         this.setState({
           userInfo: response.data
         });
+        localStorage.setItem('user', JSON.stringify(response.data));
       })
       .catch((err) =>{
-        console.error(err);
+        console.error('get userinfo error:', err);
       });
   }
 
@@ -147,6 +180,7 @@ class App extends React.Component {
       userInfo: obj
     })
     this.loadUserData(userId);
+    this.getWallets(userId);
   }
 
   logUserOut() {
@@ -178,6 +212,7 @@ class App extends React.Component {
                 globalFeed={this.state.globalFeed}
                 userInfo={this.state.userInfo}
                 balance={this.state.balance}
+                wallets={this.state.wallets}
                 {...props}
               />
           }
@@ -200,6 +235,7 @@ class App extends React.Component {
                 isLoggedIn={this.state.isLoggedIn} 
                 logUserOut={this.logUserOut.bind(this)}
                 userInfo={this.state.userInfo}
+                wallets={this.state.wallets}
                 {...routeProps} 
               />
           }
@@ -207,17 +243,40 @@ class App extends React.Component {
       );
     };
 
+    const UserAnalytics = (props) => {
+      console.log('rendering useranalytics')
+      return (
+        <DataAnalytics
+          isLoggedIn={this.state.isLoggedIn} 
+          logUserOut={this.logUserOut.bind(this)}        
+          userInfo={this.state.userInfo}
+          {...props}
+          />
+        )
+    }
+
+
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <BrowserRouter>
           <Switch>
+          <Route 
+              exact path="/chat"  
+              render={routeProps => <Chat {...routeProps} userInfo={this.state.userInfo} 
+              isLoggedIn={this.state.isLoggedIn} logUserOut={this.logUserOut}
+              socket={this.state.socket}/>}
+            />
             <Route 
               exact path="/signup" 
               render={routeProps => <SignUp {...routeProps} logUserIn={this.logUserIn.bind(this)} />} 
             />
             <Route 
               exact path="/login" 
-              render={routeProps => <Login {...routeProps} logUserIn={this.logUserIn.bind(this)} />} 
+              render={routeProps => <Login {...routeProps} getWallets={this.getWallets.bind(this)} logUserIn={this.logUserIn.bind(this)} />} 
+            />
+            <Route
+            exact path="/userAnalytics"
+            render={UserAnalytics}
             />
             <Route 
               path="/:username"

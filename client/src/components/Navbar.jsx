@@ -45,6 +45,7 @@ class Navbar extends React.Component {
         iconElementRight={
           <div>
             {this.props.isLoggedIn && 
+            <div>
               <FlatButton 
                 style={style.log_out}
                 hoverColor='#03A9F4'
@@ -52,6 +53,8 @@ class Navbar extends React.Component {
                 onClick={this.logOutAndRedirect.bind(this)} 
                 label="Log Out" 
               />
+              <Link to="/chat"><span>Chat</span></Link>
+            </div>
             }
           </div>
         }

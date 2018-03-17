@@ -4,6 +4,7 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 
+
 const style = {
   card: {
     position: 'relative',
@@ -30,7 +31,8 @@ class MiniProfile extends React.Component {
 
   render() {
     return (
-      <Paper className='feed-container'>
+      <div>
+      <Paper className='feed-container' id='mini-profile'>
         <Card>
           <CardHeader
             title={
@@ -40,7 +42,8 @@ class MiniProfile extends React.Component {
             }
             subtitle={
               <div className='member-tag'>
-                <span> ({this.props.userInfo.username})</span>
+                <p>@{this.props.userInfo.username}</p>
+                <p>{this.props.userInfo.email}</p>
               </div>
             }
             avatar={
@@ -50,12 +53,9 @@ class MiniProfile extends React.Component {
               />
             }
             />
-          <Divider />
-          <CardText style={style.balance}>
-            <strong>${this.props.balance}</strong>
-          </CardText>
         </Card>
       </Paper>
+      </div>
     );
   }
 }

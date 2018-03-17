@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "node"
+install:
+  - npm install
+script:
+  - npm run create-db
+  - npm test
+services:
+  - postgresql
+notifications:
+  slack: hrsf86:bvMPENPyd23RP2uTwjBENyY2
