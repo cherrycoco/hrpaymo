@@ -5,7 +5,7 @@ https://paymohnr.herokuapp.com/
 
 Click on this GIF to watch a full demo!
 
-<a href="https://www.youtube.com/watch?v=FGRkHi5VPYQ" target="_blank"><img src="https://imgur.com/MuQBxF0" alt="Paymo Demo" width="50%" border="10" /></a>
+<a href="https://www.youtube.com/watch?v=FGRkHi5VPYQ" target="_blank"><img src="https://imgflip.com/gif/26kh1n" alt="Paymo Demo" width="50%" border="10" /></a>
 
 ## Team
 
