@@ -1,27 +1,29 @@
-# Project Name
+# Paymo
 
-> Pithy project description
+A Venmo for glob trotters, heavily inspired by Venmo's design and functionalities!
+https://paymohnr.herokuapp.com/
+
+<iframe width="420" height="315" src="https://www.youtube.com/watch?v=FGRkHi5VPYQ?autoplay=1" frameborder="0" allowfullscreen></iframe>
 
 ## Team
 
-  - teamMember
-  - teamMember
-  - teamMember
-  - teamMember
-
-## Table of Contents
-
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
-    1. [Installing Dependencies](#installing-dependencies)
-    1. [Tasks](#tasks)
-1. [Roadmap](#roadmap)
-1. [Contributing](#contributing)
+  - Santiago Iraola
+  - Cherry Xu
+  - Cody Schindler
+  - Jarrod Powell
 
 ## Usage
 
-> Some usage instructions
+1. Login or signup with your username
+2. Select different currency wallets
+3. Verify your phone number
+4. Send / receive money to / from friends along with comment (emoji enabled)
+5. Currency will be automatically exchanged at the spot rate per API Layer upon send
+5. View personal feed
+6. View public feed
+7. View statistics on your transaction
+8. Chat with friends (online or offline)
+9. Log out using the 'Log Out' button
 
 ## Requirements
 
@@ -31,23 +33,14 @@
 - etc
 - etc
 
-## Development
+## Technology
+
+Powered by React JS, Express JS, Node.js, PostgreSQL, API Layer, Twilio API, SocketIO, TravisCI, MaterialUI, and Recharts
 
 ### Installing Dependencies
 
 From within the root directory:
 
 ```sh
-npm install -g bower
 npm install
-bower install
 ```
-
-### Roadmap
-
-View the project roadmap [here](LINK_TO_DOC)
-
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
