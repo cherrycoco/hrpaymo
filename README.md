@@ -3,7 +3,9 @@
 A Venmo for glob trotters, heavily inspired by Venmo's design and functionalities!
 https://paymohnr.herokuapp.com/
 
-<iframe width="420" height="315" src="https://www.youtube.com/watch?v=FGRkHi5VPYQ?autoplay=1" frameborder="0" allowfullscreen></iframe>
+Click on this GIF to watch a full demo!
+
+<a href="https://www.youtube.com/watch?v=FGRkHi5VPYQ" target="_blank"><img src="https://imgur.com/MuQBxF0" alt="Paymo Demo" width="50%" border="10" /></a>
 
 ## Team
 
