@@ -51,6 +51,7 @@ class Payment extends React.Component {
     }
   }
 
+  // get the payee wallets  if the payee username has been loaded
   componentDidMount() {
     setTimeout(() => {
       if (this.props.payeeUsername) {
@@ -61,6 +62,7 @@ class Payment extends React.Component {
       }
     }, 300);
 
+    // get usernames
     axios('/usernames', { params: { userId: this.props.payerId }})
     .then(response => {
       this.setState({
@@ -68,10 +70,11 @@ class Payment extends React.Component {
       });
     })
     .catch(err => {
-      console.error(err);
+      console.error('error from get username', err);
     })
   }
 
+  //if and when the amount and currencies are selected get the exchange rate
   componentDidUpdate(prevProps, prevState) {
     if (prevState.currency_from_type !== this.state.currency_from_type) {
       if (this.state.currency_from_type) {
@@ -91,13 +94,12 @@ class Payment extends React.Component {
   }
   
   handleInputChanges (event) {
-    // event.preventDefault();
     let target = event.target;
     this.setState({
       [target.name] : target.value,
       anchorEl: event.currentTarget
     })
-        // event.preventDefault();
+
     this.getEmojiOnNoteChange(target.value);
   }
 
@@ -118,6 +120,7 @@ class Payment extends React.Component {
     }
   }
 
+  // get payee username
   onDropdownInput(searchText) {
     this.setState({
       payeeUsername: searchText
@@ -125,12 +128,14 @@ class Payment extends React.Component {
     this.getPayeeWallets(searchText);
   }
 
+  //general update state function
   updateState (key, value) {
     this.setState({
       [key]: value
     });
   }
 
+  // get payee wallets by payee username
   getPayeeWallets (payeeUsername) {
     axios('/payee/wallets', { params: { username: payeeUsername }})
     .then(response => {
@@ -139,20 +144,21 @@ class Payment extends React.Component {
       });
     })
     .catch(err => {
-      console.error(err);
+      console.error('error from get payee wallets', err);
     })
   }
 
+  //calculate the fx rate
   calcfxRate (fxObj) {
     let currencyFrom = `USD${this.state.currency_from_type}`;
     let currencyTo = `USD${this.state.currency_to_type}`;
 
     let result = this.state.amount / fxObj[currencyFrom] * fxObj[currencyTo];
-    console.log(result);
     result = parseFloat(result).toFixed(2);
     return result;
   }
 
+  // get exchange rate
   getExchangeRate () {
     axios.get('/exchangeRate', {params: {
       currencyFrom: this.state.currency_from_type, 
@@ -169,29 +175,7 @@ class Payment extends React.Component {
     })
   }
 
-  calcfxRate (fxObj) {
-    let currencyFrom = `USD${this.state.currency_from_type}`;
-    let currencyTo = `USD${this.state.currency_to_type}`;
-
-    let result = this.state.amount / fxObj[currencyFrom] * fxObj[currencyTo];
-    console.log(result);
-    result = parseFloat(result).toFixed(2);
-    return result;
-  }
-
-  getExchangeRate () {
-    axios.get('/exchangeRate', {params: {
-      currencyFrom: this.state.currency_from_type, 
-      currencyTo: this.state.currency_to_type
-    }}).then(response => {
-      console.log(response.data);
-      let amountTo = this.calcfxRate (response.data);
-      this.setState({
-        amount_to: amountTo
-      });
-    })
-  }
-
+  // pay user data sent to the database
   payUser() {
     let payment = {
       payerId: this.props.payerId,
@@ -250,6 +234,7 @@ class Payment extends React.Component {
     }) 
   }
   
+  // confirmation text on the bottom of the form
   renderConfirmationText () {
     if (this.state.amount_to) {
       return (

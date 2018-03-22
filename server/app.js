@@ -48,6 +48,7 @@ app.post('/login', (req, res) => {
   })
 })
 
+// get username
 app.get('/usernames', (req, res) => {
   db.getUsernames(parseInt(_.escape(req.query.userId)))
   .then(rows => {
@@ -62,6 +63,7 @@ app.get('/usernames', (req, res) => {
   });
 })
 
+// get payee wallets
 app.get('/payee/wallets', (req, res) => {
   db.getPayeeWallets(req.query.username, (err, result) => {
     if (err) {
@@ -101,6 +103,7 @@ app.get('/profile', (req, res) => {
   });
 });
 
+// get balance of a user
 app.get('/balance', (req, res) => {
   var userId = req.query.userId;
   db.profile.getBalance(parseInt(_.escape(userId.replace(/"/g,"'"))), (err, row) => {
@@ -118,6 +121,7 @@ app.get('/balance', (req, res) => {
   });
 });
 
+// get user wallets
 app.get('/wallets', (req, res) => {
   let userId = req.query.userId;
   db.profile.getBalance(userId, (err, rows) => {
@@ -173,6 +177,7 @@ app.post('/signup', (req, res) => {
     })
 })
 
+// get exchange rate 
 app.get('/exchangeRate', (req, res) => {
   axios.get('http://apilayer.net/api/live', 
     {params: {access_key: '6c3938f9ca0181b6c222db4d74c0dffb',

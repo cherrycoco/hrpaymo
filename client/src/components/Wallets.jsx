@@ -11,13 +11,14 @@ class Wallets extends React.Component {
     this.renderWallets.bind(this);
   }
 
+  //set the wallets state to all the wallets a user has
   componentDidMount () {
     this.setState({
       wallets: this.props.wallets,
-      // currentWallet: this.props.wallets[0]
     });
   }
 
+  // as amount in wallet is updated, this will trigger a rerender of this component to reflect changes
   componentWillReceiveProps(nextProps) {
     if(this.props.wallets !== nextProps.wallets) {
       this.setState({
@@ -26,15 +27,20 @@ class Wallets extends React.Component {
       });
     }  
   } 
+  
+  // show the current wallet that is displayed
+  renderCurrentWallet (currencyType) {
+    let wallet = this.state.wallets.filter(wallet =>
+      wallet.currency_type === currencyType
+    )
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevState.wallets !== this.state.wallets) {
-  //     this.setState ({
-  //       currentWallet: this.state.wallets[0]  
-  //     });
-  //   }
-  // }
+    this.setState ({
+      currentWallet: wallet[0]
+    });
+  }
 
+  //show all the wallets a user has
+  //when a wallet is clicked the current wallet will show the active wallet
   renderWallets () {
     return this.state.wallets.map((wallet, idx) => {
       return (
@@ -50,23 +56,18 @@ class Wallets extends React.Component {
     });
   }
 
-  renderCurrentWallet (currencyType) {
-    let wallet = this.state.wallets.filter(wallet =>
-      wallet.currency_type === currencyType
-    )
-
-    this.setState ({
-      currentWallet: wallet[0]
-    });
-  }
 
   render () {
     return (
       <div className='wallet-wrapper'>
         <div id='my-wallet'>My Wallets</div>
+
+        //show all wallets
         <div id='wallet-buttons'>
           {this.renderWallets()}
         </div>
+
+        //active wallet balance
         <div id='wallet-balance'>
           <span id='currency-type'>{this.state.currentWallet.currency_type}</span>
           <span id='amount'>{this.state.currentWallet.amount}</span>

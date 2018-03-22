@@ -11,14 +11,7 @@ export default class PayeeWallets extends Component {
     this.renderSelect.bind(this);
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevProp.wallets !== this.props.wallets) {
-  //     this.setState({
-  //       value: this.props.wallets
-  //     })
-  //   }
-  // }
-
+  // this tracks which wallet is selected
   handleChange (event, index, value) {
     this.setState({
       value: value,
@@ -28,6 +21,7 @@ export default class PayeeWallets extends Component {
     this.props.updateState('wallet_to_id', walletId);
   } 
 
+  // show all available payee wallets 
   renderSelect () {
     return this.props.wallets.map(wallet => {
       return (

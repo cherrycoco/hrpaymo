@@ -15,8 +15,8 @@ export default class PayorWallets extends Component {
     this.setState({
       value: value,
     });
-    this.props.updateState('currency_from_type', value);
     let walletId = this.props.wallets[index].bal_id;
+    this.props.updateState('currency_from_type', value);
     this.props.updateState('wallet_from_id', walletId);
   } 
 
