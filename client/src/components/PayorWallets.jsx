@@ -11,6 +11,7 @@ export default class PayorWallets extends Component {
     this.renderSelect.bind(this);
   }
 
+  // this tracks which wallet is selected 
   handleChange (event, index, value) {
     this.setState({
       value: value,
@@ -20,6 +21,7 @@ export default class PayorWallets extends Component {
     this.props.updateState('wallet_from_id', walletId);
   } 
 
+  //show all available wallets of payor
   renderSelect () {
     return this.props.wallets.map(wallet => {
       return (

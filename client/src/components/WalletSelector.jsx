@@ -3,6 +3,8 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import _ from 'underscore';
 
+
+// different wallet options
 const wallets = {
   'USD': 'US Dollar',
   'CAD': 'Canadian Dollar',
@@ -21,6 +23,7 @@ export default class WalletSelector extends Component {
     };
   }
 
+  // when a wallet is selected, the state is updated. 
   handleChange (event, index, values) {
     Promise.resolve(this.setState({values}))
     .then(() => this.props.getWallets(this.state.values));
